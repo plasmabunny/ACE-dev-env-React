@@ -38,7 +38,7 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "c:/vagrant-data", "/vagrant_data"
+  config.vm.synced_folder "c:/vagrant-home", "/host-share"
 
   # config.vm.synced_folder "../data", "/vagrant_data"
 
@@ -71,6 +71,13 @@ Vagrant.configure(2) do |config|
     echo "Provisioning Virtual Machine..."
     sudo apt-get update
 
+    echo "Configuring 1G of Swapfile"
+    sudo fallocate -l 1G /swapfile
+    sudo chmod 600 /swapfile
+    ls -lh /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+
     echo "Installing developer packages..."
     sudo apt-get install build-essential curl vim -y > /dev/null
 
@@ -92,5 +99,8 @@ Vagrant.configure(2) do |config|
 
     echo "Installing React..."
     npm install -g create-react-app
+
+    echo "Installing Meteor..."
+    curl https://install.meteor.com/ | sh
   SHELL
 end
