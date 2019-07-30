@@ -13,6 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/trusty64"
+  config.vm.hostname = "ACEDevBox"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -38,7 +39,7 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "c:/vagrant-home", "/host-share"
+  # config.vm.synced_folder "c:/vagrant-home", "/host-share"
 
   # config.vm.synced_folder "../data", "/vagrant_data"
 
@@ -49,6 +50,9 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
     # vb.gui = true
+
+    # Fix the resolver
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 
     # Customize the amount of memory on the VM:
     vb.memory = "1024"
@@ -79,7 +83,7 @@ Vagrant.configure(2) do |config|
     sudo swapon /swapfile
 
     echo "Installing developer packages..."
-    sudo apt-get install build-essential curl vim -y > /dev/null
+    sudo apt-get install build-essential | curl vim -y > /dev/null
 
     echo "Installing Git..."
     sudo apt-get install git -y > /dev/null
@@ -102,5 +106,37 @@ Vagrant.configure(2) do |config|
 
     echo "Installing Meteor..."
     curl https://install.meteor.com/ | sh
+
+    echo "Configuring Samba Server for host-guest file exchange."
+
+    sudo apt update
+    sudo apt install -y samba
+    sudo chmod 777 /home/vagrant/
+
+
+    echo '[home]'   | sudo tee --append /etc/samba/smb.conf
+    echo '   comment = Samba on Ubuntu'       | sudo tee --append /etc/samba/smb.conf
+    echo '   path = /home/vagrant' | sudo tee --append /etc/samba/smb.conf
+    echo '   read only = no'   | sudo tee --append /etc/samba/smb.conf
+    echo '   browsable = yes'  | sudo tee --append /etc/samba/smb.conf
+    echo '   guest ok = yes'   | sudo tee --append /etc/samba/smb.conf
+    echo '   guest account = vagrant'
+    echo '   null passwords = yes' | sudo tee --append /etc/samba/smb.conf
+    echo '   writable = yes'   | sudo tee --append /etc/samba/smb.conf
+    echo '   create mask = 0775'   | sudo tee --append /etc/samba/smb.conf
+    echo '   directory mask = 0755'   | sudo tee --append /etc/samba/smb.conf
+
+    echo Setting SMB password to none for user 'vagrant'
+    sudo smbpasswd -a vagrant -n
+    echo Access on host machine at 55.55.55.5
+
+    # echo Creating sample meteor project
+    
+    # cd /home/vagrant
+    # meteor create meteor-example
+
+    # echo Creating sample React project
+    # npx create-react-app react-example
+
   SHELL
 end
