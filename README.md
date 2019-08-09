@@ -18,5 +18,5 @@ For ease of file editing, it has been configured with a samba server file share 
       <li>Instructions to create a React app can be found <a href="https://reactjs.org/docs/create-a-new-react-app.html">here.</a></li>
     </ul>
   </li>
-  <li>The Samba server is accessible at file://55.55.55.5/Home via your host computer's File Explorer.  Windows hosts have a Samba/SMB client built in.  Configuring a non-Windows machine with a Samba/SMB client is beyond the scope of this document.</li>
+  <li>The Samba server is accessible at file://55.55.55.5/Home via your host computer's File Explorer.  This network location coincides the the /home/vagrant folder on the guest VM.  Windows hosts have a Samba/SMB client built in.  Configuring a non-Windows machine with a Samba/SMB client is beyond the scope of this document.</li>
 </ol>
