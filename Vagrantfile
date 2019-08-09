@@ -134,6 +134,7 @@ Vagrant.configure(2) do |config|
     # Remove default configuration
     sudo rm /etc/nginx/sites-enabled/default
 
+    # Create a configuration file for http reverse proxy and add the correct settings
     echo 'server {'   | sudo tee --append /etc/nginx/sites-available/node
     echo '    listen 80;'   | sudo tee --append /etc/nginx/sites-available/node
     echo '    server_name acedevbox;'   | sudo tee --append /etc/nginx/sites-available/node
@@ -145,6 +146,8 @@ Vagrant.configure(2) do |config|
     echo '    }'   | sudo tee --append /etc/nginx/sites-available/node
     echo '}'   | sudo tee --append /etc/nginx/sites-available/node
 
+    # Create a symbolic link to create a link to the configuration in sites-available
+    # in sites-enabled to enable the reverse proxy
     sudo ln -s /etc/nginx/sites-available/node /etc/nginx/sites-enabled/node
     sudo service nginx restart
   SHELL
