@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bento/ubuntu-18.10"
   config.vm.hostname = "ACEDevBox"
 
   # Disable automatic box update checking. If you disable this, then
@@ -84,7 +84,7 @@ Vagrant.configure(2) do |config|
     sudo swapon /swapfile
 
     echo "Installing developer packages..."
-    sudo apt-get install build-essential | curl vim -y > /dev/null
+    sudo apt-get install build-essential #| curl vim -y > /dev/null
 
     echo "Installing Git..."
     sudo apt-get install git -y > /dev/null
@@ -109,11 +109,14 @@ Vagrant.configure(2) do |config|
     curl https://install.meteor.com/ | sh
 
     echo Preparing Samba fileshare
-    bash /vagrant/samba-public-share.bash
-
+    cp /vagrant/samba-public-share.bash ~
+    sudo bash ~/samba-public-share.bash
 
     echo Access on host machine at 55.55.55.5
     echo
+
+    echo Installing wave-cli deployment tool
+    npm i wave-cli
 
     # echo Creating sample meteor project
     
@@ -123,5 +126,26 @@ Vagrant.configure(2) do |config|
     # echo Creating sample React project
     # npx create-react-app react-example
 
+    # Install nginx
+    echo Installing Nginx to act as a reverse proxy, rerouting HTTP requests on port 80
+    echo to the node.js application running on port 3000.
+    sudo apt-get -y install nginx
+
+    # Remove default configuration
+    sudo rm /etc/nginx/sites-enabled/default
+
+    echo 'server {'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '    listen 80;'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '    server_name acedevbox;'   | sudo tee --append /etc/nginx/sites-available/node
+    echo ''   | sudo tee --append /etc/nginx/sites-available/node
+    echo '    location / {'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '        proxy_set_header   X-Forwarded-For $remote_addr;'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '        proxy_set_header   Host $http_host;'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '        proxy_pass         "http://127.0.0.1:3000";'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '    }'   | sudo tee --append /etc/nginx/sites-available/node
+    echo '}'   | sudo tee --append /etc/nginx/sites-available/node
+
+    sudo ln -s /etc/nginx/sites-available/node /etc/nginx/sites-enabled/node
+    sudo service nginx restart
   SHELL
 end

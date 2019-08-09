@@ -1,8 +1,9 @@
     #!/bin/bash
 
     echo "Configuring Samba Server for host-guest file exchange."
-    sudo apt update
-    sudo apt install -y samba
+    sudo apt-get update
+    sudo apt-get install -y samba
+    
     sudo chmod 2770 /home/vagrant/
 
     # Defining home share, all directives following this line are part of that share.
@@ -39,7 +40,7 @@
     echo '   force user = vagrant'   | sudo tee --append /etc/samba/smb.conf
 
     echo Setting SMB password for user 'vagrant'
-    printf "vagrant\nvagrant\n" | smbpasswd -a vagrant
+    sudo printf "vagrant\nvagrant\n" | smbpasswd -a vagrant
 
     echo Setting folder permissions and restarting service.
     sudo setfacl -R -m "u:nobody:rwx" /home/vagrant
