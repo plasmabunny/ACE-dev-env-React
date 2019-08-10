@@ -14,7 +14,7 @@ For ease of file editing, it has been configured with a samba server file share 
   <li>
     Once connected to the vagrant VM via vagrant ssh, you can start creating apps:
     <ul>
-      <li>Instructions to create a Meteor app can be found <a href="https://www.meteor.com/tutorials/blaze/creating-an-app">here.</a></li>
+      <li>Instructions to create a Meteor app can be found <a href="https://www.meteor.com/tutorials/react/creating-an-app">here.</a></li>
       <li>Instructions to create a React app can be found <a href="https://reactjs.org/docs/create-a-new-react-app.html">here.</a></li>
     </ul>
   </li>
